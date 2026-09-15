@@ -1,0 +1,15 @@
+{
+  "name": "career-application-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "node tools/lint.mjs",
+    "test": "node tools/build.mjs && node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

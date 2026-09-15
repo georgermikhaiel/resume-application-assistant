@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mock Internship Application</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <main id="application-page" class="application-page">
+      <header class="site-header">
+        <div><p class="eyebrow">LOCAL MOCK EMPLOYER PAGE</p><h1>Internship application preview</h1></div>
+        <label>Posting fixture<select id="fixture-selector"></select></label>
+      </header>
+      <section class="job-card">
+        <p id="company" class="company"></p><h2 id="role"></h2>
+        <dl class="metadata"><div><dt>Location</dt><dd id="location"></dd></div><div><dt>Term</dt><dd id="term"></dd></div><div><dt>Deadline</dt><dd id="deadline"></dd></div><div><dt>Posted</dt><dd id="posted"></dd></div></dl>
+        <p class="apply-note">This page is a safe local fixture. It has no application submission controls.</p>
+      </section>
+      <article class="description-card"><h2>Job description</h2><p id="job-description"></p></article>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

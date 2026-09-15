@@ -1,0 +1,7 @@
+node_modules/
+.pnpm-store/
+dist/
+artifacts/
+data/local/
+.DS_Store
+*.crash

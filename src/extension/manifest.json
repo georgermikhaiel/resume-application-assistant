@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Career Application Assistant - Phase 1",
+  "version": "0.1.0",
+  "description": "A local-only résumé review prototype using a mock application page.",
+  "permissions": ["activeTab", "scripting", "sidePanel", "storage"],
+  "host_permissions": ["http://127.0.0.1:4173/*", "http://localhost:4173/*"],
+  "action": { "default_title": "Open Career Application Assistant" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'self'" }
+}

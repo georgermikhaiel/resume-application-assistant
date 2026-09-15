@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Application Assistant</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <main>
+      <header class="app-header">
+        <p class="eyebrow">PHASE 1 · LOCAL ONLY</p>
+        <h1>Career Application Assistant</h1>
+        <p class="muted">Review a mock posting and build a source-backed résumé preview.</p>
+      </header>
+      <section class="controls" aria-label="Workflow controls">
+        <button id="scan-page" class="primary">1. Scan page</button>
+        <button id="generate-draft" disabled>2. Generate draft</button>
+        <button id="approve-claims" disabled>3. Approve claims</button>
+        <button id="validate-resume" disabled>4. Validate résumé</button>
+      </section>
+      <p id="status" class="status" role="status">Open the local mock application page, then scan it.</p>
+      <section id="posting-card" class="card hidden" aria-live="polite">
+        <h2>Detected posting</h2>
+        <dl id="posting-details" class="details"></dl>
+        <p id="lane-explanation" class="explanation"></p>
+        <div id="gaps" class="gaps"></div>
+      </section>
+      <section id="ledger-card" class="card hidden">
+        <h2>Claim ledger</h2>
+        <p class="muted">Every preview entry must trace to a verified fact and be approved before validation can pass.</p>
+        <div id="claim-ledger"></div>
+      </section>
+      <section id="validation-card" class="card hidden">
+        <h2>Validation</h2>
+        <div id="validation-results"></div>
+      </section>
+      <section id="preview-card" class="card hidden">
+        <h2>Résumé preview artifact</h2>
+        <p class="muted">This is a Phase 1 review preview, not a production résumé generator.</p>
+        <div class="preview-frame"><article id="resume-preview" class="resume-page" aria-label="One-page résumé preview"></article></div>
+      </section>
+    </main>
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>
