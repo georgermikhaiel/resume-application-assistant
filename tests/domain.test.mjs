@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { FACT_BANK } from "../dist/fixtures/profile.js";
 import { MOCK_POSTINGS } from "../dist/fixtures/jobs.js";
-import { approveAllClaims, createClaim, detectUnsupportedTechnologies, generateDraft, recommendLane, validateClaimLedger, validateResumeDraft } from "../dist/domain/index.js";
+import { approveAllClaims, checkTracker, createClaim, detectUnsupportedTechnologies, generateDraft, normalizeTrackerUrl, recommendLane, trackerSheetFromValues, validateClaimLedger, validateResumeDraft } from "../dist/domain/index.js";
 
 test("recommends software development with a visible reason", () => {
   const posting = MOCK_POSTINGS.find((item) => item.id === "software-development"); assert.ok(posting);
@@ -43,4 +43,24 @@ test("approved software draft passes the structural one-page gate", () => {
   const draft = approveAllClaims(generateDraft(posting, recommendLane(posting, FACT_BANK), FACT_BANK, new Date("2026-09-15T00:00:00.000Z")));
   const result = validateResumeDraft(draft, FACT_BANK, { pageWidthPx: 816, pageHeightPx: 1056, contentHeightPx: 1000, minFontSizePx: 10, columnCount: 1, textLength: 1000, hiddenElementCount: 0 });
   assert.equal(result.valid, true); assert.ok(result.checks.find((check) => check.id === "one-page")?.passed);
+});
+
+test("tracker URL normalization strips common tracking parameters", () => {
+  assert.equal(normalizeTrackerUrl("https://WWW.Example.com/jobs/123/?utm_source=test&ref=feed#apply"), "https://example.com/jobs/123");
+});
+
+test("tracker duplicate detection prioritizes normalized links and falls back to company plus role", () => {
+  const snapshot = {
+    spreadsheetId: "tracker",
+    spreadsheetTitle: "Tracker",
+    readAt: "2026-09-15T00:00:00.000Z",
+    sheets: [
+      trackerSheetFromValues("Applications", [["Company", "Role", "Status", "Link"], ["Acme", "Software Intern", "Applied", "https://example.com/jobs/1?utm_source=x"]]),
+      trackerSheetFromValues("Job Leads", [["Company", "Role", "Status", "Link"], ["Beta", "QA Intern", "New", ""]]),
+    ],
+  };
+  const linkMatch = checkTracker({ company: "Different Company", role: "Other Role", url: "https://example.com/jobs/1" }, snapshot);
+  assert.equal(linkMatch.matches.length, 1); assert.equal(linkMatch.matches[0].reason, "direct-link");
+  const roleMatch = checkTracker({ company: "Beta", role: "QA Intern", url: "https://new.example/jobs/2" }, snapshot);
+  assert.equal(roleMatch.matches.length, 1); assert.equal(roleMatch.matches[0].reason, "company-role");
 });

@@ -9,9 +9,9 @@
   <body>
     <main>
       <header class="app-header">
-        <p class="eyebrow">PHASE 1 · LOCAL ONLY</p>
+        <p class="eyebrow">PHASE 2 · LOCAL + READ-ONLY SHEETS</p>
         <h1>Career Application Assistant</h1>
-        <p class="muted">Review a mock posting and build a source-backed résumé preview.</p>
+        <p class="muted">Review a mock posting, build a source-backed résumé preview, and check your tracker before applying.</p>
       </header>
       <section class="controls" aria-label="Workflow controls">
         <button id="scan-page" class="primary">1. Scan page</button>
@@ -20,6 +20,17 @@
         <button id="validate-resume" disabled>4. Validate résumé</button>
       </section>
       <p id="status" class="status" role="status">Open the local mock application page, then scan it.</p>
+      <section id="tracker-card" class="card">
+        <h2>Google Sheets tracker (read-only)</h2>
+        <p class="muted">The extension reads only the Applications and Job Leads tabs. It never creates, edits, or submits tracker rows in Phase 2.</p>
+        <p id="oauth-config-status" class="field-help">Configure a Chrome Extension OAuth client ID in the extension manifest before connecting.</p>
+        <div class="tracker-controls">
+          <button id="connect-sheets" class="secondary">Connect &amp; read tracker</button>
+          <button id="check-tracker" disabled>Check tracker for posting</button>
+        </div>
+        <p id="tracker-status" class="tracker-status">Not connected.</p>
+        <div id="tracker-results" class="tracker-results"></div>
+      </section>
       <section id="posting-card" class="card hidden" aria-live="polite">
         <h2>Detected posting</h2>
         <dl id="posting-details" class="details"></dl>

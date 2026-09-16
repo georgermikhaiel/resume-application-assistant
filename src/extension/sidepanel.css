@@ -13,6 +13,7 @@ button { border: 1px solid #c8d0d8; border-radius: 7px; background: white; color
 button:hover:not(:disabled) { border-color: #5b4bd8; }
 button:disabled { cursor: not-allowed; opacity: .48; }
 button.primary { border-color: #5b4bd8; background: #5b4bd8; color: white; font-weight: 700; }
+button.secondary { border-color: #5b4bd8; color: #4a3ac2; font-weight: 700; }
 .status { min-height: 32px; margin-bottom: 12px; padding: 9px 10px; border-radius: 7px; background: #e8edf2; font-size: 12px; line-height: 1.35; }
 .status.success { background: #e3f5e8; color: #175b2c; }
 .status.error { background: #fde8e7; color: #8a2522; }
@@ -24,6 +25,14 @@ button.primary { border-color: #5b4bd8; background: #5b4bd8; color: white; font-
 .explanation { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid #e7ebef; font-size: 12px; line-height: 1.45; }
 .gaps { margin-top: 10px; color: #8a5a00; font-size: 12px; line-height: 1.4; }
 .gaps strong { display: block; margin-bottom: 4px; }
+.field-help { margin: 6px 0; color: #5f6b76; font-size: 11px; line-height: 1.35; }
+.tracker-controls { display: grid; gap: 7px; margin-top: 9px; }
+.tracker-status { min-height: 20px; margin: 9px 0 0; color: #5f6b76; font-size: 11px; line-height: 1.35; }
+.tracker-status.success { color: #175b2c; }
+.tracker-status.error { color: #8a2522; }
+.tracker-match { margin-top: 7px; padding: 8px; border: 1px solid #e2e6ea; border-radius: 6px; font-size: 11px; line-height: 1.35; }
+.tracker-match strong { display: block; margin-bottom: 3px; }
+.tracker-match span { color: #5f6b76; }
 .ledger-row { margin: 7px 0; padding: 8px; border: 1px solid #e2e6ea; border-radius: 6px; font-size: 11px; line-height: 1.35; }
 .ledger-row.approved { border-color: #8bc69c; background: #f2fbf4; }
 .ledger-claim { margin-bottom: 5px; font-weight: 700; }

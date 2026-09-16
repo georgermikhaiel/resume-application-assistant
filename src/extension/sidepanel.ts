@@ -1,10 +1,12 @@
-import { approveAllClaims, generateDraft, recommendLane, validateResumeDraft, type JobPosting, type LaneRecommendation, type PreviewMetrics, type ResumeDraft, type ResumeSection } from "../domain/index.js";
+import { approveAllClaims, checkTracker, generateDraft, recommendLane, validateResumeDraft, type JobPosting, type LaneRecommendation, type PreviewMetrics, type ResumeDraft, type ResumeSection, type TrackerSnapshot } from "../domain/index.js";
 import { FACT_BANK } from "../fixtures/profile.js";
+import { loadTrackerSnapshot, sheetsOAuthConfigured, TRACKER_SPREADSHEET_ID } from "./sheets-client.js";
 
 interface ScannedPosting { company: string; role: string; location: string; term: string; deadline: string; posted: string; url: string; description: string; }
 let posting: JobPosting | undefined;
 let recommendation: LaneRecommendation | undefined;
 let draft: ResumeDraft | undefined;
+let trackerSnapshot: TrackerSnapshot | undefined;
 
 const $ = <T extends HTMLElement>(id: string): T => {
   const element = document.getElementById(id);
@@ -17,10 +19,18 @@ const scanButton = $("scan-page") as HTMLButtonElement;
 const generateButton = $("generate-draft") as HTMLButtonElement;
 const approveButton = $("approve-claims") as HTMLButtonElement;
 const validateButton = $("validate-resume") as HTMLButtonElement;
+const connectSheetsButton = $("connect-sheets") as HTMLButtonElement;
+const checkTrackerButton = $("check-tracker") as HTMLButtonElement;
 const postingCard = $("posting-card");
 const ledgerCard = $("ledger-card");
 const validationCard = $("validation-card");
 const previewCard = $("preview-card");
+
+const oauthConfigured = sheetsOAuthConfigured();
+$("oauth-config-status").textContent = oauthConfigured
+  ? "Chrome OAuth is configured in the extension manifest. Connect to request read-only Sheets access."
+  : "Replace the placeholder oauth2.client_id in manifest.json with a Chrome Extension OAuth client ID, then rebuild and reload the extension.";
+connectSheetsButton.disabled = !oauthConfigured;
 
 function setStatus(message: string, kind: "normal" | "success" | "error" = "normal"): void {
   status.textContent = message;
@@ -28,10 +38,30 @@ function setStatus(message: string, kind: "normal" | "success" | "error" = "norm
 }
 
 async function audit(event: string, details: Record<string, unknown>): Promise<void> {
-  const existing = await chrome.storage.local.get(["phase1AuditLog"]);
-  const log = Array.isArray(existing.phase1AuditLog) ? existing.phase1AuditLog : [];
+  const existing = await chrome.storage.local.get(["auditLog"]);
+  const log = Array.isArray(existing.auditLog) ? existing.auditLog : [];
   log.push({ event, details, timestamp: new Date().toISOString() });
-  await chrome.storage.local.set({ phase1AuditLog: log.slice(-100) });
+  await chrome.storage.local.set({ auditLog: log.slice(-100) });
+}
+
+function renderTrackerCheck(): void {
+  const results = $("tracker-results"); results.textContent = "";
+  if (!posting || !trackerSnapshot) return;
+  const result = checkTracker(posting, trackerSnapshot);
+  const trackerStatus = $("tracker-status");
+  if (result.matches.length === 0) {
+    trackerStatus.textContent = "No matching Application or Job Lead was found.";
+    trackerStatus.className = "tracker-status success";
+  } else {
+    trackerStatus.textContent = `${result.matches.length} existing tracker match${result.matches.length === 1 ? "" : "es"} found. Review before proceeding.`;
+    trackerStatus.className = "tracker-status error";
+    for (const match of result.matches) {
+      const row = document.createElement("div"); row.className = "tracker-match";
+      const title = document.createElement("strong"); title.textContent = `${match.sheet} · row ${match.row.rowNumber}`;
+      const detail = document.createElement("span"); detail.textContent = `${match.reason === "direct-link" ? "Normalized link match" : "Normalized company + role match"} · ${match.row.values.Company ?? ""} · ${match.row.values.Role ?? ""} · Status: ${match.row.values.Status ?? "not recorded"}`;
+      row.append(title, detail); results.append(row);
+    }
+  }
 }
 
 function readMockPosting(): ScannedPosting | null {
@@ -54,6 +84,7 @@ async function scanPage(): Promise<void> {
   recommendation = recommendLane(posting, FACT_BANK);
   renderPosting(posting, recommendation);
   generateButton.disabled = false;
+  checkTrackerButton.disabled = !trackerSnapshot;
   setStatus("Page scanned. Review the detected posting and lane explanation, then generate a draft.", "success");
   await audit("scan-page", { postingId: posting.id, company: posting.company, role: posting.role, lane: recommendation.lane });
 }
@@ -181,4 +212,33 @@ validateButton.addEventListener("click", async () => {
   const result = validateResumeDraft(draft, FACT_BANK, measurePreview());
   renderValidation(result);
   await audit("validate-resume", { draftId: draft.id, valid: result.valid, checks: result.checks });
+});
+
+connectSheetsButton.addEventListener("click", async () => {
+  connectSheetsButton.disabled = true;
+  checkTrackerButton.disabled = true;
+  $("tracker-status").textContent = "Connecting to Google and reading the two tracker tabs...";
+  $("tracker-status").className = "tracker-status";
+  try {
+    trackerSnapshot = await loadTrackerSnapshot(TRACKER_SPREADSHEET_ID, true);
+    $("tracker-status").textContent = `Read-only connection ready: ${trackerSnapshot.spreadsheetTitle}. ${trackerSnapshot.sheets.map((sheet) => `${sheet.name} (${sheet.rows.length} populated rows)`).join(" · ")}`;
+    $("tracker-status").className = "tracker-status success";
+    checkTrackerButton.disabled = !posting;
+    if (posting) renderTrackerCheck();
+    setStatus("Google Sheets tracker read successfully. No tracker changes were made.", "success");
+    await audit("read-tracker", { spreadsheetId: trackerSnapshot.spreadsheetId, sheets: trackerSnapshot.sheets.map((sheet) => ({ name: sheet.name, rowCount: sheet.rows.length })) });
+  } catch (error: unknown) {
+    $("tracker-status").textContent = error instanceof Error ? error.message : "Google Sheets connection failed.";
+    $("tracker-status").className = "tracker-status error";
+    setStatus("Google Sheets connection failed. Review the tracker message.", "error");
+  } finally {
+    connectSheetsButton.disabled = false;
+  }
+});
+
+checkTrackerButton.addEventListener("click", async () => {
+  if (!posting || !trackerSnapshot) return;
+  renderTrackerCheck();
+  const result = checkTracker(posting, trackerSnapshot);
+  await audit("check-tracker", { postingId: posting.id, matchCount: result.matches.length, reasons: result.matches.map((match) => match.reason) });
 });
