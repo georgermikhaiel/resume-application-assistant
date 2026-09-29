@@ -6,7 +6,7 @@
   "permissions": ["activeTab", "identity", "scripting", "sidePanel", "storage"],
   "host_permissions": ["http://127.0.0.1:4173/*", "http://localhost:4173/*", "https://sheets.googleapis.com/*"],
   "oauth2": {
-    "client_id": "REPLACE_WITH_CHROME_EXTENSION_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+    "client_id": "64610277618-giq82dk2m8pr3r2vn5gaqeepmbuql8dv.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/spreadsheets.readonly"]
   },
   "action": { "default_title": "Open Career Application Assistant" },
