@@ -1,8 +1,8 @@
 # Career Application Assistant
 
-Phase 2 is a local Chrome Manifest V3 prototype for reviewing a mock internship posting, producing a source-backed résumé preview, and checking a user-owned Google Sheets tracker without writing to it.
+A local-first assistant for finding, evaluating, tracking, and preparing Canadian internship and co-op applications. The current prototype is a Chrome Manifest V3 extension that reviews a mock posting, produces a source-backed résumé preview, and checks a user-owned Google Sheets tracker without writing to it.
 
-It does not connect to Google Drive, an LLM API, Intern Insider, or real employer websites. It does not fill or submit applications. Google Sheets access is read-only in this phase.
+The MVP is for a University of Alberta Computer Science student seeking paid Winter 2027 or Summer 2027 internships and co-ops in Canada, including remote roles. It prioritizes software development, backend, full-stack, AI/ML, and applied AI, while also considering QA/test automation, developer tooling, data engineering, cloud, cybersecurity, and technical data roles.
 
 ## Requirements
 
@@ -75,7 +75,16 @@ The tracker check reports either no match or the matching tab, row number, and r
 
 No row is created or edited. A future write phase must show an exact cell-change preview and receive explicit approval before making any spreadsheet change.
 
-## Phase 1 safety boundaries
+## MVP roadmap
+
+1. **Posting intake** — manually paste or import a direct posting URL, then normalize company, role, Canadian or remote location, term, deadline, description, and source. Search integrations come later.
+2. **Application tracker** — keep persistent application records and statuses: saved, preparing, applied, interviewing, offer, rejected, or withdrawn. The existing Sheets duplicate check remains useful as an optional import/export path.
+3. **Fit matching** — score a posting against the student’s preferences and verified background, then explain the evidence, uncertainties, and honest gaps.
+4. **Replaceable decision models** — use a small interface for structured tasks such as relevance ranking and requirement classification. Development starts with a deterministic fallback; later adapters may use Laya locally or Jev through an API. Decision models do not draft answers or drive a browser.
+5. **Facts-only application drafts** — draft answers from user-provided, approved facts only. A separate text-generation adapter must flag missing information instead of inventing it.
+6. **Optional form assistance** — suggest or fill reviewed answers on supported sites, but never store passwords, bypass CAPTCHAs or site protections, or submit an application. The user always reviews and submits.
+
+## Safety boundaries
 
 - All résumé claims come from `src/fixtures/profile.ts` and must reference fact IDs.
 - The canonical claim ledger model and validation live in `src/domain/claim-ledger.ts`.
@@ -83,10 +92,12 @@ No row is created or edited. A future write phase must show an exact cell-change
 - Unapproved or source-less claims fail résumé validation.
 - GPA, work authorization, legal information, demographics, and other unapproved sensitive details are not in the mock résumé.
 - The research visualization, Kemicard, and Bot or Not ownership boundaries are represented in the fact bank notes.
+- Browser assistance is optional and must pause for user review before any application is submitted.
+- Application passwords are never stored, and CAPTCHAs or other site protections are never bypassed.
 
-## Incomplete or intentionally blocked
+## Current limitations
 
-- Google Sheets writes, row creation, and application logging are not implemented yet.
+- Persistent application records, tracker writes, and application logging are not implemented yet.
 - Google Drive résumé upload and file selection are not implemented.
-- LLM-assisted tailoring is not implemented; draft generation remains deterministic and source-backed.
-- Real employer websites and application submission remain out of scope.
+- LLM-assisted answer drafting is not implemented; current résumé draft generation remains deterministic and source-backed.
+- Real employer website support, posting search/import, and application submission are not implemented.

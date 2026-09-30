@@ -4,6 +4,7 @@ export type ResumeLane = (typeof RESUME_LANES)[number];
 export type FactCategory = "contact" | "education" | "skill" | "experience" | "project" | "guardrail";
 export type ResumeSectionName = "Header" | "Education" | "Technical Skills" | "Experience" | "Projects";
 export type OwnershipLevel = "solo" | "shared" | "supervised" | "team";
+export type ApplicationStatus = "saved" | "preparing" | "applied" | "interviewing" | "offer" | "rejected" | "withdrawn";
 
 export interface SourceRef {
   document: string;
@@ -71,4 +72,13 @@ export interface ResumeDraft {
   claims: ClaimLedgerEntry[];
   sections: ResumeSection[];
   generatedAt: string;
+}
+
+export interface ApplicationRecord {
+  id: string;
+  posting: JobPosting;
+  status: ApplicationStatus;
+  createdAt: string;
+  appliedAt?: string;
+  notes?: string;
 }

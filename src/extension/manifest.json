@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Career Application Assistant - Phase 2",
-  "version": "0.2.0",
-  "description": "A local résumé review prototype with read-only Google Sheets tracker checks.",
+  "version": "0.3.0",
+  "description": "A local résumé review prototype with reviewed, local-only form assistance and read-only Google Sheets tracker checks.",
   "permissions": ["activeTab", "identity", "scripting", "sidePanel", "storage"],
   "host_permissions": ["http://127.0.0.1:4173/*", "http://localhost:4173/*", "https://sheets.googleapis.com/*"],
   "oauth2": {

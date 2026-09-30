@@ -1,3 +1,5 @@
+import { JobPosting, ApplicationRecord, ApplicationStatus } from "./models.js";
+
 export const TRACKER_SHEET_NAMES = ["Applications", "Job Leads"] as const;
 export type TrackerSheetName = (typeof TRACKER_SHEET_NAMES)[number];
 
@@ -111,4 +113,23 @@ export function checkTracker(posting: { company: string; role: string; url: stri
   }
   const matches = [...directLinkMatches, ...companyRoleMatches.filter((candidate) => !directLinkMatches.some((match) => match.sheet === candidate.sheet && match.row.rowNumber === candidate.row.rowNumber))];
   return { matches, directLinkMatches, companyRoleMatches, normalizedLink, normalizedCompanyRole };
+}
+
+export function createApplication(
+  posting: JobPosting, 
+  now: Date = new Date()
+): ApplicationRecord  {
+  return {id: `application-${posting.id}-${now.getTime()}`, posting, status: "saved", createdAt: now.toISOString()}
+}
+
+export function transitionApplicationStatus(
+  application: ApplicationRecord,
+  nextStatus: ApplicationStatus,
+  posting: ApplicationRecord['posting'],
+  now: Date = new Date(),
+): ApplicationRecord {
+  
+
+  
+  return {id: `application-${posting.id}-${now.getTime()}`, posting, status: "saved", createdAt: now.toISOString()}
 }

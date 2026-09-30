@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { FACT_BANK } from "../dist/fixtures/profile.js";
 import { MOCK_POSTINGS } from "../dist/fixtures/jobs.js";
-import { approveAllClaims, checkTracker, createClaim, detectUnsupportedTechnologies, generateDraft, normalizeTrackerUrl, recommendLane, trackerSheetFromValues, validateClaimLedger, validateResumeDraft } from "../dist/domain/index.js";
+import { createApplication, approveAllClaims, checkTracker, createClaim, detectUnsupportedTechnologies, generateDraft, normalizeTrackerUrl, recommendLane, trackerSheetFromValues, validateClaimLedger, validateResumeDraft } from "../dist/domain/index.js";
 
 test("recommends software development with a visible reason", () => {
   const posting = MOCK_POSTINGS.find((item) => item.id === "software-development"); assert.ok(posting);
@@ -64,3 +64,15 @@ test("tracker duplicate detection prioritizes normalized links and falls back to
   const roleMatch = checkTracker({ company: "Beta", role: "QA Intern", url: "https://new.example/jobs/2" }, snapshot);
   assert.equal(roleMatch.matches.length, 1); assert.equal(roleMatch.matches[0].reason, "company-role");
 });
+
+test("creating a new application", () => {
+  const date = new Date("2026-09-15T00:00:00.000Z");
+const posting = MOCK_POSTINGS[0];
+const application = createApplication(posting, date);
+
+assert.equal(application.id, `application-${posting.id}-${date.getTime()}`);
+assert.equal(application.posting, posting);
+assert.equal(application.status, "saved");
+assert.equal(application.createdAt, date.toISOString());
+assert.equal(application.appliedAt, undefined);
+})
