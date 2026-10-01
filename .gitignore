@@ -1,6 +1,8 @@
 node_modules/
 .pnpm-store/
 dist/
+apps/web/.next/
+*.tsbuildinfo
 artifacts/
 data/local/
 .DS_Store

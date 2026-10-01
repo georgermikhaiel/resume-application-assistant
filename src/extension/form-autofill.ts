@@ -44,7 +44,9 @@ if (!(window as unknown as Record<string, boolean>)[installed]) {
       const field = (Object.keys(patterns) as ProfileField[]).find((key) => patterns[key].test(text));
       if (!field) continue;
       // A specific name match takes precedence over the generic full-name match.
-      const specific = (field === "fullName") && (patterns.firstName.test(text) ? "firstName" : patterns.lastName.test(text) ? "lastName" : field);
+      const specific: ProfileField = field === "fullName"
+        ? (patterns.firstName.test(text) ? "firstName" : patterns.lastName.test(text) ? "lastName" : field)
+        : field;
       matches.push({ field: specific, label: text || element.name || element.id || "Unlabelled field", matchedBy: text || "element metadata", hasExistingValue: Boolean(element.value.trim()), element });
     }
     return { matches, skipped };

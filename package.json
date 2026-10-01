@@ -1,13 +1,20 @@
 {
   "name": "career-application-assistant",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "node tools/build.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "node tools/lint.mjs",
-    "test": "node tools/build.mjs && node --test tests/*.test.mjs"
+    "test": "node tools/build.mjs && node --test tests/*.test.mjs",
+    "dev:web": "npm run dev --workspace=@career/web",
+    "build:web": "npm run build --workspace=@career/web",
+    "typecheck:web": "npm run typecheck --workspace=@career/web"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

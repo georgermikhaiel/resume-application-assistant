@@ -1,6 +1,14 @@
 # Career Application Assistant
 
-A local-first assistant for finding, evaluating, tracking, and preparing Canadian internship and co-op applications. The current prototype is a Chrome Manifest V3 extension that reviews a mock posting, produces a source-backed résumé preview, and checks a user-owned Google Sheets tracker without writing to it.
+A full-stack application-copilot foundation for finding, evaluating, tracking, and preparing Canadian internship and co-op applications. The original Chrome Manifest V3 extension remains in place as the browser-side assistant while the new dashboard and database workspaces become the system of record.
+
+## Workspace layout
+
+- `src/` — current extension, mock page, and proven domain prototype. It remains runnable while migration is incremental.
+- `apps/web/` — Next.js dashboard shell for profile facts, jobs, applications, and generated artifacts.
+- `packages/database/` — PostgreSQL/Prisma data contract for the full-stack product.
+
+The first delivery is intentionally additive: no working extension code is removed until equivalent workspace packages and automated checks exist.
 
 The MVP is for a University of Alberta Computer Science student seeking paid Winter 2027 or Summer 2027 internships and co-ops in Canada, including remote roles. It prioritizes software development, backend, full-stack, AI/ML, and applied AI, while also considering QA/test automation, developer tooling, data engineering, cloud, cybersecurity, and technical data roles.
 
@@ -8,7 +16,7 @@ The MVP is for a University of Alberta Computer Science student seeking paid Win
 
 - Node.js 20 or newer
 - Chrome 114 or newer for the Side Panel API
-- npm (pnpm is optional; the commands below work on a fresh Mac installation)
+- npm 10 or newer
 
 ## Install and verify
 
@@ -19,6 +27,8 @@ npm run lint
 npm test
 npm run build
 ```
+
+Run the dashboard with `npm run dev:web` after setting `DATABASE_URL` for the database work.
 
 `npm test` builds first and then runs the unit tests. The current test suite covers lane recommendations, unsupported technologies, unapproved claims, one-page validation, URL normalization, and tracker duplicate matching.
 
